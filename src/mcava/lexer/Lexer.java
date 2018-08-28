@@ -8,6 +8,7 @@ public class Lexer{
 	private final char[] specialChars = {'+', '>', '<', '-', '*', '/', ',', '(', ')', ':', ';', '{', '}', '[', ']', '=', '"', '\''};
 	private final String[] operationChars = {"+", "-", "*", "/"};
 	public List<Token> lex(String line){
+		line = line + " ";
 		List<Token> tokens = new LinkedList<Token>();
 		List<String> content = new LinkedList<String>();
 		List<Character> wordBuild = new LinkedList<Character>();

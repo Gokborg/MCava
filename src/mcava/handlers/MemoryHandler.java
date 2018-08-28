@@ -13,6 +13,7 @@ public class MemoryHandler {
 	public int findSpace() throws OutOfMemory{
 		for (int i = 0; i < mem.length; i++) {
 			if (mem[i] == false) {
+				mem[i] = true;
 				return i+1;
 			}
 		}
