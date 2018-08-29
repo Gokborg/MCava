@@ -2,8 +2,11 @@ package mcava.parsers;
 
 import java.util.List;
 
+import mcava.exceptions.IndexException;
+import mcava.exceptions.NoArrayException;
 import mcava.exceptions.NoVariableException;
 import mcava.exceptions.OutOfMemory;
+import mcava.handlers.ArrayHandler;
 import mcava.handlers.InstructionHandler;
 import mcava.handlers.VariableHandler;
 import mcava.lexer.Token;
@@ -13,10 +16,12 @@ public class Parser {
 	private InstructionHandler instrhdlr;
 	private VariableHandler varhdlr;
 	private VariableParser varparser;
-	public Parser(InstructionHandler instrhdlr, VariableHandler varhdlr) {
+	private ArrayParser arrparser;
+	public Parser(InstructionHandler instrhdlr, ArrayHandler arrhdlr, VariableHandler varhdlr) {
 		this.instrhdlr = instrhdlr;
 		this.varhdlr = varhdlr;
 		varparser = new VariableParser(instrhdlr, varhdlr);
+		arrparser = new ArrayParser(arrhdlr, instrhdlr, varparser);
 	}
 	/*
 	 * Before you mess around with the parsers assembly heres some info:
@@ -37,15 +42,16 @@ public class Parser {
 	
 	public void parse(List<Token> tokens) {
 		if (!tokens.isEmpty()) {
-			/*
-			 * ASSIGNMENT PARSING
-			 * 
-			 * Ex: a = 5 + 5
-			 * First checking if size of the tokens is greater then two
-			 * Then Im looking for a word or char as the first token
-			 * Then Im looking for an equal sign
-			 */
-			if (tokens.size() > 2 && (tokens.get(0).getTokenType() == TokenKind.WORD || tokens.get(0).getTokenType() == TokenKind.CHARACTER) && tokens.get(1).getTokenType() == TokenKind.EQUAL) {
+			
+			if (tokens.get(1).getTokenType() == TokenKind.OPEN_BRACKET) {
+				try {
+					arrparser.parse(tokens);
+				} catch (OutOfMemory | NoArrayException | NoVariableException | IndexException e) {
+					e.printStackTrace();
+				}
+			}
+			else if (tokens.size() > 2 && (tokens.get(0).getTokenType() == TokenKind.WORD || tokens.get(0).getTokenType() == TokenKind.CHARACTER) && tokens.get(1).getTokenType() == TokenKind.EQUAL) {
+				
 				try {
 					varparser.parse(tokens);
 				} catch (NoVariableException | OutOfMemory e) {

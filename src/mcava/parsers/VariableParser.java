@@ -33,6 +33,7 @@ public class VariableParser {
 		 * EX: a = 4; 
 		 * EX: a = b;
 		 */
+		
 		if (tokens.size() <= 5) {
 			
 			/*
@@ -58,10 +59,10 @@ public class VariableParser {
 			 * Single assignment to a variable
 			 * EX: a = b;
 			 */
+			
 			else if (tokens.get(2).getTokenType() == TokenKind.CHARACTER || tokens.get(2).getTokenType() == TokenKind.WORD) {
 				try {
 					Variable srcVar = varhdlr.getVariable(tokens.get(2).getTokenString());
-
 					instrhdlr.addInstruction("ld r1, $" + srcVar.getAddress());
 					instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r1");
 					
@@ -72,13 +73,27 @@ public class VariableParser {
 				}
 			}
 			
-			else if (tokens.get(3).getTokenType() == TokenKind.CHARACTER) {
+			/*
+			 * Single assignment to a character
+			 * EX: a = 'c'
+			 */
+			
+			else if (tokens.get(3).getTokenType() == TokenKind.CHARACTER && tokens.get(2).getTokenType() == TokenKind.SINGLE_QUOTE && tokens.get(4).getTokenType() == TokenKind.SINGLE_QUOTE) {
 				int asciiValue = tokens.get(3).getTokenString().charAt(0);
 				
-				//instrhdlr.addInstruction();
+				/*
+				 * Assembly Here:
+				 * asciiValue holds the integer value of the character
+				 */
+				instrhdlr.addInstruction("li r1, " + asciiValue);
+				instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r1");
+			}
+			else {
+				System.err.println("[VarParser] Failed to parse assignment: '" + destVar.getName() + "'");
 			}
 		}
 		else {
+			System.err.println("[VarParser] Invalid assignment: '" + destVar.getName() + "'");
 			/*
 			 * Some expression parser
 			 */

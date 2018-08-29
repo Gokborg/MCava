@@ -55,6 +55,12 @@ public class Lexer{
 				}
 				else {
 					switch(str) {
+					case "[":
+						tokens.add(new Token(str, TokenKind.OPEN_BRACKET));
+						break;
+					case "]":
+						tokens.add(new Token(str, TokenKind.CLOSE_BRACKET));
+						break;
 					case "'":
 						tokens.add(new Token(str, TokenKind.SINGLE_QUOTE));
 						break;
