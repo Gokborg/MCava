@@ -1,4 +1,4 @@
-package io.github.gok.mcava.validations;
+package io.github.gokborg.mcava.validations;
 
 public class Filter {
 	public boolean ignore(String line) {

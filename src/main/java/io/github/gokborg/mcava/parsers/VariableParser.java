@@ -1,11 +1,10 @@
-package io.github.gok.mcava.parsers;
+package io.github.gokborg.mcava.parsers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.gok.mcava.components.DataType;
-import io.github.gok.mcava.components.Variable;
-import io.github.gok.mcava.validations.SyntaxChecker;
+import io.github.gokborg.mcava.components.DataType;
+import io.github.gokborg.mcava.components.Variable;
 import io.github.gokborg.mcava.handlers.InstructionHandler;
 import io.github.gokborg.mcava.handlers.RegisterHandler;
 import io.github.gokborg.mcava.handlers.ScopeHandler;
@@ -13,6 +12,7 @@ import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.handlers.VariableHandler;
 import io.github.gokborg.mcava.lexer.Token;
 import io.github.gokborg.mcava.lexer.TokenKind;
+import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class VariableParser {
 	private TokenHandler tokenhdlr;

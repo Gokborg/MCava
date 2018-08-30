@@ -3,8 +3,8 @@ package io.github.gokborg.mcava.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.gok.mcava.components.DataType;
-import io.github.gok.mcava.components.Variable;
+import io.github.gokborg.mcava.components.DataType;
+import io.github.gokborg.mcava.components.Variable;
 
 
 public class VariableHandler {

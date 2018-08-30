@@ -1,4 +1,4 @@
-package io.github.gok.mcava.validations;
+package io.github.gokborg.mcava.validations;
 
 import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.lexer.Token;

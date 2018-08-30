@@ -5,9 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
-import io.github.gok.mcava.parsers.Parser;
-import io.github.gok.mcava.validations.Filter;
-import io.github.gok.mcava.validations.SyntaxChecker;
 import io.github.gokborg.mcava.handlers.InstructionHandler;
 import io.github.gokborg.mcava.handlers.MemoryHandler;
 import io.github.gokborg.mcava.handlers.RegisterHandler;
@@ -16,6 +13,9 @@ import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.handlers.VariableHandler;
 import io.github.gokborg.mcava.lexer.Lexer;
 import io.github.gokborg.mcava.lexer.Token;
+import io.github.gokborg.mcava.parsers.Parser;
+import io.github.gokborg.mcava.validations.Filter;
+import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 
 public class Main {

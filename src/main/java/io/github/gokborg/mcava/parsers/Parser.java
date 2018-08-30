@@ -1,11 +1,11 @@
-package io.github.gok.mcava.parsers;
+package io.github.gokborg.mcava.parsers;
 
-import io.github.gok.mcava.validations.SyntaxChecker;
 import io.github.gokborg.mcava.handlers.InstructionHandler;
 import io.github.gokborg.mcava.handlers.RegisterHandler;
 import io.github.gokborg.mcava.handlers.ScopeHandler;
 import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.handlers.VariableHandler;
+import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class Parser {
 	private VariableParser varParser;

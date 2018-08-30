@@ -1,4 +1,4 @@
-package io.github.gok.mcava.components;
+package io.github.gokborg.mcava.components;
 
 public class Variable {
 	private final String NAME;
