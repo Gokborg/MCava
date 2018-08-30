@@ -1,6 +1,4 @@
-package mcava.handlers;
-
-import mcava.exceptions.OutOfMemory;
+package io.github.gokborg.mcava.handlers;
 
 public class MemoryHandler {
 	private boolean[] mem;
@@ -10,14 +8,15 @@ public class MemoryHandler {
 			mem[i] = false;
 		}
 	}
-	public int findSpace() throws OutOfMemory{
+	public Integer findSpace(){
 		for (int i = 0; i < mem.length; i++) {
 			if (mem[i] == false) {
 				mem[i] = true;
 				return i+1;
 			}
 		}
-		throw new OutOfMemory("No memory available!");
+		System.out.println("Out of memory!");
+		return null;
 	}
 	public void deallocate(int address) {
 		mem[address-1] = false;

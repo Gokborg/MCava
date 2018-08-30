@@ -1,12 +1,14 @@
-package mcava.lexer;
+package io.github.gokborg.mcava.lexer;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import io.github.gokborg.mcava.handlers.TokenHandler;
 
 public class Lexer{
 	private final char[] specialChars = {'+', '>', '<', '-', '*', '/', ',', '(', ')', ':', ';', '{', '}', '[', ']', '=', '"', '\''};
 	private final String[] operationChars = {"+", "-", "*", "/"};
+	
 	public List<Token> lex(String line){
 		line = line + " ";
 		List<Token> tokens = new LinkedList<Token>();
@@ -107,8 +109,11 @@ public class Lexer{
 				}
 			}
 			else if (str.length() > 1){
-				if (str.equalsIgnoreCase("int") || str.equalsIgnoreCase("char")) {
+				if (str.equalsIgnoreCase("int") || str.equalsIgnoreCase("char") || str.equalsIgnoreCase("float")) {
 					tokens.add(new Token(str, TokenKind.DATA_TYPE));
+				}
+				else if (str.equalsIgnoreCase("print")) {
+					tokens.add(new Token(str, TokenKind.CMD));
 				}
 				else {
 					tokens.add(new Token(str, TokenKind.WORD));

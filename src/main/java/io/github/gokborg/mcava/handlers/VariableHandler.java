@@ -1,11 +1,11 @@
-package mcava.handlers;
+package io.github.gokborg.mcava.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mcava.components.Variable;
-import mcava.exceptions.NoVariableException;
-import mcava.exceptions.OutOfMemory;
+import io.github.gok.mcava.components.DataType;
+import io.github.gok.mcava.components.Variable;
+
 
 public class VariableHandler {
 	private List<Variable> variables = new ArrayList<Variable>();
@@ -16,21 +16,22 @@ public class VariableHandler {
 	}
 	
 	//Creates a new variable in memory
-	public void createVariable(String name) throws OutOfMemory {
-		variables.add(new Variable(name, memhdlr.findSpace()));
+	public void createVariable(String NAME, DataType DATA_TYPE, int SCOPE){
+		variables.add(new Variable(NAME, memhdlr.findSpace(), DATA_TYPE, SCOPE));
 	}
 	
-	//Returns a variable based on its name in code
-	public Variable getVariable(String name) throws NoVariableException {
+	//Returns a variable based on its name in code file
+	public Variable getVariable(String name){
 		for (Variable var : variables) {
 			if (var.getName().equalsIgnoreCase(name)) {
 				return var;
 			}
 		}
-		throw new NoVariableException("Variable : '" + name + "' does not exist!");
+		System.err.println("'" + name + "' is not a variable");
+		return null;
 	}
 	
-	//Deallocates a variable from memory
+	//Deallocates a variable from memory based on its name in code file
 	public void removeVariable(String name) {
 		for (int i = 0; i < variables.size(); i++) {
 			if (variables.get(i).getName() == name) {

@@ -1,0 +1,98 @@
+package io.github.gok.mcava.parsers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.gok.mcava.components.DataType;
+import io.github.gok.mcava.components.Variable;
+import io.github.gok.mcava.validations.SyntaxChecker;
+import io.github.gokborg.mcava.handlers.InstructionHandler;
+import io.github.gokborg.mcava.handlers.RegisterHandler;
+import io.github.gokborg.mcava.handlers.ScopeHandler;
+import io.github.gokborg.mcava.handlers.TokenHandler;
+import io.github.gokborg.mcava.handlers.VariableHandler;
+import io.github.gokborg.mcava.lexer.Token;
+import io.github.gokborg.mcava.lexer.TokenKind;
+
+public class VariableParser {
+	private TokenHandler tokenhdlr;
+	private VariableHandler varhdlr;
+	private ScopeHandler scopehdlr;
+	private InstructionHandler instrhdlr;
+	private RegisterHandler reghdlr;
+	public VariableParser(InstructionHandler instrhdlr, RegisterHandler reghdlr, TokenHandler tokenhdlr, VariableHandler varhdlr, ScopeHandler scopehdlr) {
+		this.tokenhdlr = tokenhdlr;
+		this.varhdlr = varhdlr;
+		this.scopehdlr = scopehdlr;
+		this.instrhdlr = instrhdlr;
+		this.reghdlr = reghdlr;
+	}
+	public void parse(int checkStatus) {
+		switch (checkStatus) {
+		case 1:
+			//Allocating space for the variable AND assigning it a value
+			Variable destinationVariable = makeVariable();
+			tokenhdlr.removeTokenAtPointer();
+			assignVariable(destinationVariable);
+			break;
+		
+		case 2:
+			//Simply just allocating space for the variable
+			makeVariable();
+			break;
+		}
+	}
+	private void assignVariable(Variable destVar) {
+		/*
+		 * int a = 3;
+		 * 3 is an arguement
+		 * 
+		 * int b = 3 + 3;
+		 * 3 + 3 is an arguement
+		 * 
+		 * Those are what I am collecting in the list of args
+		 */
+		List<Token> args = new ArrayList<Token>();
+		tokenhdlr.movePointer(2);
+		Token tok = tokenhdlr.getNextToken();
+		while(tok.getTokenKind() != TokenKind.SEMI_COLON) {
+			args.add(tok);
+			tok = tokenhdlr.getNextToken();
+		}
+		tokenhdlr.resetPointer();
+		
+		//Allocating space on the register file
+		int register = reghdlr.findSpace();
+		
+		/*
+		 * Assignment of a variable to a single value.
+		 * Ex: int a = 3;
+		 * Ex: int a = b;
+		 */
+		if (args.size() == 1) {
+			
+			Token value = args.get(0);
+			if(SyntaxChecker.isNum(value)) {
+				instrhdlr.addInstruction("li r" + register + ", " + value.getName());
+				instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
+			}
+			else if (SyntaxChecker.isWordOrChar(value)) {
+				Variable srcVar = varhdlr.getVariable(value.getName());
+				if (srcVar != null) {
+					instrhdlr.addInstruction("ld r" + register + ", $" + srcVar.getAddress());
+					instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
+				}
+			}
+			
+			//Clearing the space I allocated on the register file
+			reghdlr.deallocate(register);
+		}
+	}
+	private Variable makeVariable() {
+		DataType dataType = DataType.getDataType(tokenhdlr.getNextToken().getName());
+		String name = tokenhdlr.getNextToken().getName();
+		varhdlr.createVariable(name, dataType, scopehdlr.getScope());
+		tokenhdlr.resetPointer();
+		return varhdlr.getVariable(name);
+	}
+}

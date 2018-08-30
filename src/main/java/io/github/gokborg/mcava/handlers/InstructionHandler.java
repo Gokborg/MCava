@@ -1,4 +1,4 @@
-package mcava.handlers;
+package io.github.gokborg.mcava.handlers;
 
 import java.util.LinkedList;
 import java.util.List;

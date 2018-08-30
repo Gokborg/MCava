@@ -1,7 +1,8 @@
-package mcava.lexer;
+package io.github.gokborg.mcava.lexer;
 
 public enum TokenKind {
 	DATA_TYPE,
+	CMD,
 	SEMI_COLON,
 	NUMBER,
 	OPEN_BRACE,
