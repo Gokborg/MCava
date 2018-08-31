@@ -36,7 +36,7 @@ public class TokenHandler {
 		pointer--;
 	}
 	public Token getCurrentToken() {
-		return tokens.get(pointer);
+		return pointer != -1 ? tokens.get(pointer) : tokens.get(0);
 	}
 	
 	public Token getLastToken() {

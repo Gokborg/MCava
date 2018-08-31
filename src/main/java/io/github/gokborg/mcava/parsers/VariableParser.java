@@ -81,8 +81,13 @@ public class VariableParser {
 			else if (SyntaxChecker.isWordOrChar(value)) {
 				Variable srcVar = varhdlr.getVariable(value.getName());
 				if (srcVar != null) {
-					instrhdlr.addInstruction("ld r" + register + ", $" + srcVar.getAddress());
-					instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
+					if (destVar.getDataType() == srcVar.getDataType()) {
+						instrhdlr.addInstruction("ld r" + register + ", $" + srcVar.getAddress());
+						instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
+					}
+					else {
+						System.err.println("Variable : '" + destVar.getName() + "' and Variable : '" + srcVar.getName() + "' are not of the same data type.");
+					}
 				}
 			}
 			

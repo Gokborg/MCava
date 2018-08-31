@@ -45,10 +45,9 @@ public class Main {
 		
 		//Parser
 		Parser parser = new Parser(instrhdlr, reghdlr, varhdlr, tokenhdlr, scopehdlr);
-		
 		Scanner sc;
 		try {
-			sc = new Scanner(new File("/home/anshul/Desktop/test.txt"));
+			sc = new Scanner(new File("code.mcava"));
 			while (sc.hasNextLine()) {
 				
 				String line = sc.nextLine();
