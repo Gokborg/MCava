@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Lexer{
-	private final char[] specialChars = {'+', '>', '<', '-', '*', '/', ',', '(', ')', ':', ';', '{', '}', '[', ']', '=', '"', '\''};
-	private final String[] operationChars = {"+", "-", "*", "/"};
+	private final static char[] specialChars = {'+', '>', '<', '-', '*', '/', ',', '(', ')', ':', ';', '{', '}', '[', ']', '=', '"', '\''};
+	private final static String[] operationChars = {"+", "-", "*", "/"};
 	
-	public List<Token> lex(String line){
+	public static List<Token> lex(String line){
 		line = line + " ";
 		List<Token> tokens = new LinkedList<Token>();
 		List<String> content = new LinkedList<String>();
@@ -45,7 +45,7 @@ public class Lexer{
 		
 		for (String str : content) {
 			
-			if (str.length() == 1) {
+			if (str.length() == 1 || isNum(str)) {
 				
 				if (isOperationChar(str)) {
 					
@@ -122,8 +122,8 @@ public class Lexer{
 			
 		}
 		return tokens;
-	}
-	private boolean isNum(String str) {
+}
+	private static boolean isNum(String str) {
 		
 		try {
 		    Integer.parseInt(str);
@@ -132,7 +132,7 @@ public class Lexer{
 			return false;
 		}	
 	}
-	private boolean isOperationChar(String str) {
+	private static boolean isOperationChar(String str) {
 		
 		for (String opStr: operationChars) {
 			if (opStr.equalsIgnoreCase(str)) {
@@ -141,7 +141,7 @@ public class Lexer{
 		}
 		return false;
 	}
-	private boolean isSpecialChar(char Char) {
+	private static boolean isSpecialChar(char Char) {
 		for (char specialChar : specialChars) {
 			if (specialChar == Char) {
 				return true;

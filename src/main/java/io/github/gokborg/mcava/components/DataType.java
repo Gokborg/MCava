@@ -4,17 +4,20 @@ public enum DataType {
 	INTEGER,
 	CHAR,
 	FLOAT,
+	ARRAY_INT,
+	ARRAY_CHAR,
+	ARRAY_FLOAT,
 	NONE;
 	
-	public static DataType getDataType(String word) {
+	public static DataType getDataType(String word, boolean isArray) {
 		if (word.equalsIgnoreCase("int")) {
-			return DataType.INTEGER;
+			return isArray ? DataType.ARRAY_INT : DataType.INTEGER;
 		}
 		else if (word.equalsIgnoreCase("char")) {
-			return DataType.CHAR;
+			return isArray ? DataType.ARRAY_CHAR : DataType.CHAR;
 		}
 		else if (word.equalsIgnoreCase("float")) {
-			return DataType.FLOAT;
+			return isArray ? DataType.ARRAY_FLOAT : DataType.FLOAT;
 		}
 		else {
 			return DataType.NONE;

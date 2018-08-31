@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
+import io.github.gokborg.mcava.handlers.ArrayHandler;
 import io.github.gokborg.mcava.handlers.InstructionHandler;
 import io.github.gokborg.mcava.handlers.MemoryHandler;
 import io.github.gokborg.mcava.handlers.RegisterHandler;
@@ -23,9 +24,6 @@ public class Main {
 		//Part of Stage 0:
 		Filter filter = new Filter();
 		
-		//Part of Stage 1:
-		Lexer lexer = new Lexer();
-		
 		//Part of Stage 2:
 		TokenHandler tokenhdlr = new TokenHandler(null);
 		
@@ -41,22 +39,24 @@ public class Main {
 		InstructionHandler instrhdlr = new InstructionHandler();
 		MemoryHandler memhdlr = new MemoryHandler(64);
 		VariableHandler varhdlr = new VariableHandler(memhdlr);
+		ArrayHandler arrhdlr = new ArrayHandler(varhdlr);
 		ScopeHandler scopehdlr = new ScopeHandler();
 		
 		//Parser
-		Parser parser = new Parser(instrhdlr, reghdlr, varhdlr, tokenhdlr, scopehdlr);
+		Parser parser = new Parser(instrhdlr, arrhdlr, reghdlr, varhdlr, tokenhdlr, scopehdlr);
 		Scanner sc;
 		try {
 			sc = new Scanner(new File("code.mcava"));
 			while (sc.hasNextLine()) {
 				
 				String line = sc.nextLine();
+				line = line.substring(0, line.lastIndexOf("//") != -1 ? line.lastIndexOf("//") : line.length());
 				
 				//Stage 0 : Look for dirty lines
 				if (!filter.ignore(line)) {
 					
 					//Stage 1 : Create the tokens.
-					List<Token> tokens = lexer.lex(line);
+					List<Token> tokens = Lexer.lex(line);
 					
 					//Step 2 : Send the generated tokens to the token handler
 					tokenhdlr.setTokens(tokens);

@@ -1,7 +1,7 @@
 package io.github.gokborg.mcava.handlers;
 
 public class ScopeHandler {
-	private int scope;
+	private int scope = 0;
 	
 	/*
 	 * Scope

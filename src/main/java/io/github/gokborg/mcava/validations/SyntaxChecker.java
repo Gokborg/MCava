@@ -21,9 +21,9 @@ public class SyntaxChecker {
 	public int checkVar() {
 		
 		/*
-		 * Returning 0 : Means that no variable is being intialized or we failed to intialize
-		 * Returning 1 : Means that I am intialzing a variable with an expression or value to the right
-		 * Returning 2 : Means that I am intialzing a variable with no expression or value to the right
+		 * Returning 0 : Means that no variable is being intialized or we failed to initialize
+		 * Returning 1 : Means that I am initializing a variable with an expression or value to the right
+		 * Returning 2 : Means that I am initializing a variable with no expression or value to the right
 		 * Returning 3 : Means that I am setting a variable equal to an expression or value
 		 */
 		boolean isInitializing = false;
@@ -41,6 +41,11 @@ public class SyntaxChecker {
 				//I move the pointer right to ignore a value
 				tokenhdlr.movePointerRight();
 				Token tok = tokenhdlr.getNextToken();
+				if (tok.getTokenKind() == TokenKind.NONE) {
+					System.err.println("[SynChk] There are no arguments!");
+					status = 0;
+					return 0;
+				}
 				boolean isOperation = false;
 				while(tok.getTokenKind() != TokenKind.NONE) {
 					
@@ -58,19 +63,18 @@ public class SyntaxChecker {
 						return !isInitializing ? 3 : 1;
 					}
 					else {
-						System.err.println("There is an error in the expression!");
+						System.err.println("[SynChk] There is an error in the expression!");
 						resetTokenHandler();
 						status = 0;
 						return 0;
 					}
-					
 					tok = tokenhdlr.getNextToken();
 				}
 			}
-			else if (isSemiColon(tokenhdlr.getLastToken())) {
+			else if (isSemiColon(tokenhdlr.getCurrentToken())) {
 				resetTokenHandler();
 				if (!isInitializing) {
-					System.err.println("You cannot intialze a variable with no given data type!");
+					System.err.println("[SynChk] You cannot intialze a variable with no given data type!");
 					status = 0;
 					return 0;
 				}
@@ -78,14 +82,14 @@ public class SyntaxChecker {
 				return 2;
 			}
 			else {
-				System.err.println("Your not intialzing the variable to anything! : " + tokenhdlr.getCurrentToken().getName());
+				System.err.println("[SynChk] Your not intialzing the variable to anything! : " + tokenhdlr.getCurrentToken().getName());
 				resetTokenHandler();
 				status = 0;
 				return 0;
 			}
 		}
 		else {
-			System.err.println("Where is the variable name? : " + tokenhdlr.getCurrentToken().getName());
+			//System.err.println("[SynChk] Where is the variable name? : " + tokenhdlr.getCurrentToken().getName());
 		}
 	
 		resetTokenHandler();
@@ -94,12 +98,11 @@ public class SyntaxChecker {
 	}
 	
 	public int checkInitArray() {
-		
 		/*
 		 * Returning 0 : Means that there is an error
-		 * Returning 1 : Means that they intialze an array with a given size AND intial values
-		 * Returning 2 : Means that they intialze an array with no given size AND intial values
-		 * Returning 3 : Means that they intialze an array with a given size AND no intial values
+		 * Returning 1 : Means that they intialze an array with a given size AND initial values
+		 * Returning 2 : Means that they intialze an array with no given size AND initial values
+		 * Returning 3 : Means that they intialze an array with a given size AND no initial values
 		 */
 		boolean givenSize = false;
 		Integer arraySize = null;
@@ -115,7 +118,7 @@ public class SyntaxChecker {
 						if (!isCloseBracket(tokenhdlr.getNextToken())) {
 							//Meaning they did not close the bracket around the number
 							resetTokenHandler();
-							System.err.println("You did not close the bracket!");
+							System.err.println("[SynChk] You did not close the bracket!");
 							status = 0;
 							return 0;
 						}
@@ -169,20 +172,20 @@ public class SyntaxChecker {
 								status = 3;
 								return 3;
 							}
-							System.err.println("Must give a size to the array!");
+							System.err.println("[SynChk] Must give a size to the array!");
 							resetTokenHandler();
 							status = 0;
 							return 0;
 						}
 					}
 					else {
-						System.err.println("Where is the variable name? : " + tokenhdlr.getCurrentToken().getName());
+						System.err.println("[SynChk] Where is the variable name? : " + tokenhdlr.getCurrentToken().getName());
 					}
 				}
 			}
 		}
 		else{
-			System.err.println("Where is the data type? : " + tokenhdlr.getCurrentToken().getName());
+			//System.err.println("[SynChk] Where is the data type? : " + tokenhdlr.getCurrentToken().getName());
 		}
 		resetTokenHandler();
 		status = 0;

@@ -33,7 +33,7 @@ public class VariableParser {
 		case 1:
 			//Allocating space for the variable AND assigning it a value
 			Variable destinationVariable = makeVariable();
-			tokenhdlr.removeTokenAtPointer();
+			tokenhdlr.removeToken(0);
 			assignVariable(destinationVariable);
 			break;
 		
@@ -56,6 +56,7 @@ public class VariableParser {
 		 */
 		List<Token> args = new ArrayList<Token>();
 		tokenhdlr.movePointer(2);
+		
 		Token tok = tokenhdlr.getNextToken();
 		while(tok.getTokenKind() != TokenKind.SEMI_COLON) {
 			args.add(tok);
@@ -71,9 +72,11 @@ public class VariableParser {
 		 * Ex: int a = 3;
 		 * Ex: int a = b;
 		 */
+		
 		if (args.size() == 1) {
 			
 			Token value = args.get(0);
+			
 			if(SyntaxChecker.isNum(value)) {
 				instrhdlr.addInstruction("li r" + register + ", " + value.getName());
 				instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
@@ -81,7 +84,7 @@ public class VariableParser {
 			else if (SyntaxChecker.isWordOrChar(value)) {
 				Variable srcVar = varhdlr.getVariable(value.getName());
 				if (srcVar != null) {
-					if (destVar.getDataType() == srcVar.getDataType()) {
+					if (destVar.getDataType() == srcVar.getDataType() && destVar.getScope() <= srcVar.getScope()) {
 						instrhdlr.addInstruction("ld r" + register + ", $" + srcVar.getAddress());
 						instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
 					}
@@ -96,10 +99,11 @@ public class VariableParser {
 		}
 	}
 	private Variable makeVariable() {
-		DataType dataType = DataType.getDataType(tokenhdlr.getNextToken().getName());
+		DataType dataType = DataType.getDataType(tokenhdlr.getNextToken().getName(), false);
 		String name = tokenhdlr.getNextToken().getName();
 		varhdlr.createVariable(name, dataType, scopehdlr.getScope());
 		tokenhdlr.resetPointer();
+		instrhdlr.addInstruction("; Intialized '" + name + "'");
 		return varhdlr.getVariable(name);
 	}
 }

@@ -1,12 +1,12 @@
 package io.github.gokborg.mcava.handlers;
 
+import java.util.Arrays;
+
 public class RegisterHandler {
 	private boolean[] regStates;
 	public RegisterHandler(final int AMOUNT_OF_REGS) {
 		regStates = new boolean[AMOUNT_OF_REGS];
-		for (int i = 0; i < AMOUNT_OF_REGS; i++) {
-			regStates[i] = false;
-		}
+		Arrays.fill(regStates, false);
 	}
 	
 	/* 
@@ -15,7 +15,7 @@ public class RegisterHandler {
 	 */
 	public Integer findSpace(){
 		for (int i = 0; i < regStates.length; i++) {
-			if (regStates[i] == false) {
+			if (!regStates[i]) {
 				regStates[i] = true;
 				return i+1;
 			}

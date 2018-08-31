@@ -41,10 +41,7 @@ public class TokenHandler {
 	
 	public Token getLastToken() {
 		pointer--;
-		if (pointer < 0) {
-			return new Token("null", TokenKind.NONE);
-		}
-		return tokens.get(pointer);
+		return pointer < 0 ? new Token("null", TokenKind.NONE) : tokens.get(pointer);
 	}
 	public void resetPointer() {
 		pointer = -1;
@@ -59,9 +56,8 @@ public class TokenHandler {
 	}
 	public Token getNextToken(int index) {
 		pointer = index-1;
-		if (index >= tokens.size()) {
-			return new Token("null", TokenKind.NONE);
-		}
-		return tokens.get(index);
+		return index >= tokens.size() ? new Token("null", TokenKind.NONE) : tokens.get(index);
+
+		
 	}
 }
