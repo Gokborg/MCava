@@ -14,7 +14,8 @@ public class Lexer{
 		List<Character> wordBuild = new LinkedList<Character>();
 		for (int i = 0; i < line.length(); i++) {
 			char theChar = line.charAt(i);
-			if (theChar != '\0' || theChar != '\n' || theChar != '\t') {
+			if (theChar != '\0' && theChar != '\t') {
+				
 				if (theChar == ' ') {
 					StringBuilder strBuilder = new StringBuilder();
 					for (Character c : wordBuild) {

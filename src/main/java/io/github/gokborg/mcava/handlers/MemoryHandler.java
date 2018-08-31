@@ -1,16 +1,16 @@
 package io.github.gokborg.mcava.handlers;
 
+import java.util.Arrays;
+
 public class MemoryHandler {
 	private boolean[] mem;
 	public MemoryHandler(final int AMOUNT_OF_MEM) {
 		mem = new boolean[AMOUNT_OF_MEM];
-		for (int i = 0; i < AMOUNT_OF_MEM; i++) {
-			mem[i] = false;
-		}
+		Arrays.fill(mem, false);
 	}
 	public Integer findSpace(){
 		for (int i = 0; i < mem.length; i++) {
-			if (mem[i] == false) {
+			if (!mem[i]) {
 				mem[i] = true;
 				return i+1;
 			}
