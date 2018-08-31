@@ -27,6 +27,7 @@ public class VariableParser {
 		this.instrhdlr = instrhdlr;
 		this.reghdlr = reghdlr;
 	}
+	
 	public void parse(int checkStatus) {
 		switch (checkStatus) {
 		case 1:
@@ -42,6 +43,7 @@ public class VariableParser {
 			break;
 		}
 	}
+	
 	private void assignVariable(Variable destVar) {
 		/*
 		 * int a = 3;

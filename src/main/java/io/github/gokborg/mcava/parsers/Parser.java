@@ -9,10 +9,8 @@ import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class Parser {
 	private VariableParser varParser;
-	private VariableHandler varhdlr;
 	public Parser(InstructionHandler instrhdlr, RegisterHandler reghdlr, VariableHandler varhdlr, TokenHandler tokenhdlr, ScopeHandler scopehdlr) {
 		this.varParser = new VariableParser(instrhdlr, reghdlr, tokenhdlr, varhdlr, scopehdlr);
-		this.varhdlr = varhdlr;
 	}
 	public void parse(SyntaxChecker synChk) {
 		int checkStatus = synChk.checkVar();

@@ -193,77 +193,44 @@ public class SyntaxChecker {
 		tokenhdlr.resetPointer();
 	}
 	public static boolean isCharacter(Token tok) {
-		if (tok.getTokenKind() == TokenKind.CHARACTER) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.CHARACTER;
 	}
 	public static boolean isOpenBrace(Token tok) {
-		if (tok.getTokenKind() == TokenKind.OPEN_BRACE) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.OPEN_BRACE;
 	}
 	public static boolean isCloseBrace(Token tok) {
-		if (tok.getTokenKind() == TokenKind.CLOSE_BRACE) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.CLOSE_BRACE;
 	}
 	
 	public static boolean isCloseBracket(Token tok) {
-		if (tok.getTokenKind() == TokenKind.CLOSE_BRACKET) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.CLOSE_BRACKET;
 	}
 	
 	public static boolean isOpenBracket(Token tok) {
-		if (tok.getTokenKind() == TokenKind.OPEN_BRACKET) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.OPEN_BRACKET;
 	}
 	
 	public static boolean isSemiColon(Token tok) {
-		if (tok.getTokenKind() == TokenKind.SEMI_COLON) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.SEMI_COLON;
 	}
 	
 	public static boolean isOperation(Token tok) {
-		if (tok.getTokenKind() == TokenKind.OPERATION) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.OPERATION;
 	}
 	
 	public static boolean isNum(Token tok) {
-		if (tok.getTokenKind() == TokenKind.NUMBER) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.NUMBER;
 	}
 	
 	public static boolean isDataType(Token tok) {
-		if (tok.getTokenKind() == TokenKind.DATA_TYPE) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.DATA_TYPE;
 	}
 	
 	public static boolean isEqual(Token tok) {
-		if (tok.getTokenKind() == TokenKind.EQUAL) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.EQUAL;
 	}
 	
 	public static boolean isWordOrChar(Token tok) {
-		if (tok.getTokenKind() == TokenKind.WORD || tok.getTokenKind() == TokenKind.CHARACTER) {
-			return true;
-		}
-		return false;
+		return tok.getTokenKind() == TokenKind.WORD || tok.getTokenKind() == TokenKind.CHARACTER;
 	}
 }

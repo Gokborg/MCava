@@ -3,8 +3,6 @@ package io.github.gokborg.mcava.lexer;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.gokborg.mcava.handlers.TokenHandler;
-
 public class Lexer{
 	private final char[] specialChars = {'+', '>', '<', '-', '*', '/', ',', '(', ')', ':', ';', '{', '}', '[', ']', '=', '"', '\''};
 	private final String[] operationChars = {"+", "-", "*", "/"};
