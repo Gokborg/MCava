@@ -13,7 +13,7 @@ public class Parser {
 	private ArrayParser arrParser;
 	public Parser(InstructionHandler instrhdlr, ArrayHandler arrhdlr, RegisterHandler reghdlr, VariableHandler varhdlr, TokenHandler tokenhdlr, ScopeHandler scopehdlr) {
 		this.varParser = new VariableParser(instrhdlr, reghdlr, tokenhdlr, varhdlr, scopehdlr);
-		this.arrParser = new ArrayParser(tokenhdlr, arrhdlr, scopehdlr);
+		this.arrParser = new ArrayParser(tokenhdlr, reghdlr, arrhdlr, scopehdlr, instrhdlr);
 	}
 	public void parse(SyntaxChecker synChk) {
 		

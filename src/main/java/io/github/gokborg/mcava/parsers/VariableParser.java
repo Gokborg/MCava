@@ -103,7 +103,7 @@ public class VariableParser {
 		String name = tokenhdlr.getNextToken().getName();
 		varhdlr.createVariable(name, dataType, scopehdlr.getScope());
 		tokenhdlr.resetPointer();
-		instrhdlr.addInstruction("; Intialized '" + name + "'");
+		//instrhdlr.addInstruction("; Intialized '" + name + "'");
 		return varhdlr.getVariable(name);
 	}
 }
