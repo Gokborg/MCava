@@ -1,8 +1,5 @@
 package io.github.gokborg.mcava.parsers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.gokborg.mcava.components.DataType;
 import io.github.gokborg.mcava.components.Variable;
 import io.github.gokborg.mcava.handlers.InstructionHandler;
@@ -10,8 +7,6 @@ import io.github.gokborg.mcava.handlers.RegisterHandler;
 import io.github.gokborg.mcava.handlers.ScopeHandler;
 import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.handlers.VariableHandler;
-import io.github.gokborg.mcava.lexer.Token;
-import io.github.gokborg.mcava.lexer.TokenKind;
 import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class VariableParser {
@@ -28,42 +23,24 @@ public class VariableParser {
 		this.reghdlr = reghdlr;
 	}
 	
-	public void parse(int checkStatus) {
-		switch (checkStatus) {
-		case 1:
-			//Allocating space for the variable AND assigning it a value
-			Variable destinationVariable = makeVariable();
-			tokenhdlr.removeToken(0);
-			assignVariable(destinationVariable);
-			break;
+	public void parse(String info) {
 		
-		case 2:
-			//Simply just allocating space for the variable
-			makeVariable();
-			break;
+		String[] varInfo = info.split(" ");
+		
+		if (varInfo[0].equalsIgnoreCase("none")) {
+			if (varhdlr.isVariable(varInfo[1])) {
+				assignVariable(varhdlr.getVariable(varInfo[1]), varInfo);
+			}
+		}
+		else if (varInfo[2].equalsIgnoreCase("none")) {
+			makeVariable(varInfo);
+		}
+		else {
+			assignVariable(makeVariable(varInfo), varInfo);
 		}
 	}
 	
-	private void assignVariable(Variable destVar) {
-		/*
-		 * int a = 3;
-		 * 3 is an arguement
-		 * 
-		 * int b = 3 + 3;
-		 * 3 + 3 is an arguement
-		 * 
-		 * Those are what I am collecting in the list of args
-		 */
-		List<Token> args = new ArrayList<Token>();
-		tokenhdlr.movePointer(2);
-		
-		Token tok = tokenhdlr.getNextToken();
-		while(tok.getTokenKind() != TokenKind.SEMI_COLON) {
-			args.add(tok);
-			tok = tokenhdlr.getNextToken();
-		}
-		tokenhdlr.resetPointer();
-		
+	private void assignVariable(Variable destVar, String[] info) {
 		//Allocating space on the register file
 		int register = reghdlr.findSpace();
 		
@@ -73,23 +50,20 @@ public class VariableParser {
 		 * Ex: int a = b;
 		 */
 		
-		if (args.size() == 1) {
-			
-			Token value = args.get(0);
-			
-			if(SyntaxChecker.isNum(value)) {
-				instrhdlr.addInstruction("li r" + register + ", " + value.getName());
+		if (info[2].length() == 1) {			
+			if(isNum(info[2])) {
+				instrhdlr.addInstruction("li r" + register + ", " + info[2]);
 				instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
 			}
-			else if (SyntaxChecker.isWordOrChar(value)) {
-				Variable srcVar = varhdlr.getVariable(value.getName());
+			else if (info[2].matches("[a-zA-Z]+")) {
+				Variable srcVar = varhdlr.getVariable(info[2]);
 				if (srcVar != null) {
-					if (destVar.getDataType() == srcVar.getDataType() && destVar.getScope() <= srcVar.getScope()) {
+					if (destVar.getDataType() == srcVar.getDataType() && destVar.getScope() >= srcVar.getScope()) {
 						instrhdlr.addInstruction("ld r" + register + ", $" + srcVar.getAddress());
 						instrhdlr.addInstruction("str $" + destVar.getAddress() + ", r" + register);
 					}
 					else {
-						System.err.println("Variable : '" + destVar.getName() + "' and Variable : '" + srcVar.getName() + "' are not of the same data type.");
+						System.err.println("Variable : '" + destVar.getName() + "' and Variable : '" + srcVar.getName() + "' are not of the same data type or not in the same scope.");
 					}
 				}
 			}
@@ -98,12 +72,21 @@ public class VariableParser {
 			reghdlr.deallocate(register);
 		}
 	}
-	private Variable makeVariable() {
-		DataType dataType = DataType.getDataType(tokenhdlr.getNextToken().getName(), false);
-		String name = tokenhdlr.getNextToken().getName();
+	private Variable makeVariable(String[] info) {
+		DataType dataType = DataType.getDataType(info[0], false);
+		String name = info[1];
 		varhdlr.createVariable(name, dataType, scopehdlr.getScope());
 		tokenhdlr.resetPointer();
 		//instrhdlr.addInstruction("; Intialized '" + name + "'");
 		return varhdlr.getVariable(name);
+	}
+	private boolean isNum(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
 	}
 }

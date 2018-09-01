@@ -114,6 +114,9 @@ public class Lexer{
 				else if (str.equalsIgnoreCase("print")) {
 					tokens.add(new Token(str, TokenKind.CMD));
 				}
+				else if (str.equalsIgnoreCase("if")) {
+					tokens.add(new Token(str, TokenKind.IF));
+				}
 				else {
 					tokens.add(new Token(str, TokenKind.WORD));
 				}

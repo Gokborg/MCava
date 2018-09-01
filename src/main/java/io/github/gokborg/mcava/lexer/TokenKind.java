@@ -22,5 +22,6 @@ public enum TokenKind {
 	EQUAL,
 	WORD,
 	CHARACTER,
+	IF,
 	NONE;
 }

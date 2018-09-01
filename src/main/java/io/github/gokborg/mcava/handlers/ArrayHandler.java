@@ -17,6 +17,15 @@ public class ArrayHandler {
 		
 		arrays.add(new Array(NAME, SIZE, DATA_TYPE, SCOPE, varhdlr));
 	}
+	
+	public boolean isArray(String name) {
+		for (Array arr : arrays) {
+			if (arr.getName().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Array getArray(String name) {
 		for (Array arr : arrays) {
 			if (arr.getName().equalsIgnoreCase(name)) {

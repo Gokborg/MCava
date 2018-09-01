@@ -18,7 +18,9 @@ public class TokenHandler {
 	public List<Token> getTokens(){
 		return tokens;
 	}
-	
+	public int getPointer() {
+		return pointer;
+	}
 	public void removeToken(int index) {
 		tokens.remove(index);
 	}

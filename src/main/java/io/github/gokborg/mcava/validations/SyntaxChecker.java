@@ -7,6 +7,7 @@ import io.github.gokborg.mcava.lexer.TokenKind;
 public class SyntaxChecker {
 	private TokenHandler tokenhdlr;
 	private int status;
+	private String info;
 	public SyntaxChecker(TokenHandler tokenhdlr) {
 		this.tokenhdlr = tokenhdlr;
 	}
@@ -17,75 +18,136 @@ public class SyntaxChecker {
 	public void resetStatus() {
 		status = 0;
 	}
-	
-	public int checkVar() {
-		
-		/*
-		 * Returning 0 : Means that no variable is being intialized or we failed to initialize
-		 * Returning 1 : Means that I am initializing a variable with an expression or value to the right
-		 * Returning 2 : Means that I am initializing a variable with no expression or value to the right
-		 * Returning 3 : Means that I am setting a variable equal to an expression or value
-		 */
-		boolean isInitializing = false;
-		if (isDataType(tokenhdlr.getNextToken())) {
-			isInitializing = true;
-		}
-		else {
-			isInitializing = false;
-			tokenhdlr.movePointerLeft();
-		}
-		if (isWordOrChar(tokenhdlr.getNextToken())) {
-			
-			if (isEqual(tokenhdlr.getNextToken())) {
-				
-				//I move the pointer right to ignore a value
-				tokenhdlr.movePointerRight();
-				Token tok = tokenhdlr.getNextToken();
-				if (tok.getTokenKind() == TokenKind.NONE) {
-					System.err.println("[SynChk] There are no arguments!");
-					status = 0;
-					return 0;
-				}
-				boolean isOperation = false;
-				while(tok.getTokenKind() != TokenKind.NONE) {
-					
-					
-					//Looking for proper syntax on expressions
-					if (!isOperation && isNum(tok) || isWordOrChar(tok)) {
-						isOperation = false;
-					}
-					else if (isOperation(tok)) {
-						isOperation = true;
-					}
-					else if (isSemiColon(tok)) {
-						resetTokenHandler();
-						status = !isInitializing ? 3 : 1;
-						return !isInitializing ? 3 : 1;
+	public String getInfo() {
+		return info;
+	}
+	public boolean checkLeaveScope() {
+		return isCloseBrace(tokenhdlr.getNextToken()) ? true : false;
+	}
+	public boolean checkIf() {
+		if (isIf(tokenhdlr.getNextToken())) {
+			if (isOpenParanthesis(tokenhdlr.getNextToken())) {
+				if (isWordOrChar(tokenhdlr.getNextToken()) || isNum(tokenhdlr.getCurrentToken())) {
+					String firstArg = tokenhdlr.getCurrentToken().getName();
+					if (isOpenBracket(tokenhdlr.getNextToken())) {
+						if (!isNum(tokenhdlr.getNextToken())) {
+							tokenhdlr.resetPointer();
+							System.err.println("Missing the index");
+							return false;
+						}
+						if (!isCloseBracket(tokenhdlr.getNextToken())) {
+							tokenhdlr.resetPointer();
+							System.err.println("Missing close bracket");
+							return false;
+						}
+						firstArg += "[" + tokenhdlr.getLastToken().getName() + "]";
+						tokenhdlr.movePointerRight();
 					}
 					else {
-						System.err.println("[SynChk] There is an error in the expression!");
-						resetTokenHandler();
-						status = 0;
-						return 0;
+						tokenhdlr.movePointerLeft();
 					}
-					tok = tokenhdlr.getNextToken();
+					String condition = tokenhdlr.getNextToken().getName() + tokenhdlr.getNextToken().getName();
+					if (isWordOrChar(tokenhdlr.getNextToken()) || isNum(tokenhdlr.getCurrentToken())) {
+						String secondArg = tokenhdlr.getCurrentToken().getName();
+						if (isOpenBracket(tokenhdlr.getNextToken())) {
+							if (!isNum(tokenhdlr.getNextToken())) {
+								tokenhdlr.resetPointer();
+								System.err.println("Missing the index");
+								return false;
+							}
+							if (!isCloseBracket(tokenhdlr.getNextToken())) {
+								System.err.println("Missing close bracket");
+								tokenhdlr.resetPointer();
+								return false;
+							}
+							secondArg += "[" + tokenhdlr.getLastToken().getName() + "]";
+							tokenhdlr.movePointerRight();
+						}
+						else {
+							tokenhdlr.movePointerLeft();
+						}
+						if (isCloseParanthesis(tokenhdlr.getNextToken())) {
+							if (isOpenBrace(tokenhdlr.getNextToken())) {
+								tokenhdlr.resetPointer();
+								info = firstArg + " " + secondArg + " " + condition;
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		tokenhdlr.resetPointer();
+		return false;
+	}
+	
+	public boolean checkVar() {
+		/*
+		 * info sheet: [dataType, none] [word] [expression or value or string]
+		 */
+		String dataType = "";
+		if (isDataType(tokenhdlr.getNextToken())) {
+			
+			dataType = tokenhdlr.getCurrentToken().getName();
+		}
+		else {	
+			dataType = "none";
+		}	
+		if (isWordOrChar(tokenhdlr.getNextToken())) {
+			String varName = tokenhdlr.getCurrentToken().getName();
+			
+			if (isOpenBracket(tokenhdlr.getNextToken())) {
+				if (!isNum(tokenhdlr.getNextToken())) {
+					System.err.println("Missing the index");
+					return false;
+				}
+				if (!isCloseBracket(tokenhdlr.getNextToken())) {
+					System.err.println("Missing close bracket");
+					return false;
+				}
+				varName += "[" + tokenhdlr.getLastToken().getName() + "]";
+				tokenhdlr.movePointerRight();
+			}
+			else {
+				tokenhdlr.movePointerLeft();
+			}
+			if (isEqual(tokenhdlr.getNextToken())) {
+				Token tok = tokenhdlr.getNextToken();
+				if (tok.getTokenKind() != TokenKind.NONE) {
+					String value = "";
+					while(tok.getTokenKind() != TokenKind.NONE) {
+						if (tok.getTokenKind() != TokenKind.SINGLE_QUOTE) {
+							if (isSemiColon(tok)) {
+								resetTokenHandler();
+								if (value != "") {
+									//Initializing variable with value
+									info = dataType + " " + varName + " " + value;
+									return true;
+								}
+								else {
+									System.err.println("[SynChk] Empty args");
+									break;
+								}	
+							}
+							value += tok.getName();
+						}
+						tok = tokenhdlr.getNextToken();
+					}
+				}
+				else {
+					System.err.println("[SynChk] There are no arguments!");
 				}
 			}
 			else if (isSemiColon(tokenhdlr.getCurrentToken())) {
 				resetTokenHandler();
-				if (!isInitializing) {
-					System.err.println("[SynChk] You cannot intialze a variable with no given data type!");
-					status = 0;
-					return 0;
-				}
-				status = 2;
-				return 2;
+				
+				//Initializing variable
+				info = dataType + " " + varName + " none";
+				return true;
 			}
 			else {
 				System.err.println("[SynChk] Your not intialzing the variable to anything! : " + tokenhdlr.getCurrentToken().getName());
-				resetTokenHandler();
-				status = 0;
-				return 0;
 			}
 		}
 		else {
@@ -93,10 +155,10 @@ public class SyntaxChecker {
 		}
 	
 		resetTokenHandler();
-		status = 0;
-		return 0;
+		return false;
 	}
 	
+	//TODO: Rewrite this ugly duckling
 	public int checkInitArray() {
 		/*
 		 * Returning 0 : Means that there is an error
@@ -107,6 +169,7 @@ public class SyntaxChecker {
 		boolean givenSize = false;
 		Integer arraySize = null;
 		if (isDataType(tokenhdlr.getNextToken())) {
+			
 			if (isOpenBracket(tokenhdlr.getNextToken())) {
 				
 				if (isCloseBracket(tokenhdlr.getNextToken()) || isNum(tokenhdlr.getCurrentToken())) {
@@ -152,7 +215,7 @@ public class SyntaxChecker {
 											resetTokenHandler();
 											status = 2;
 											return 2;
-										}
+										}				
 										resetTokenHandler();
 										status = 0;
 										return 0;
@@ -194,6 +257,15 @@ public class SyntaxChecker {
 	
 	private void resetTokenHandler() {
 		tokenhdlr.resetPointer();
+	}
+	public static boolean isOpenParanthesis(Token tok) {
+		return tok.getTokenKind() == TokenKind.OPEN_PARANTHESIS;
+	}
+	public static boolean isCloseParanthesis(Token tok) {
+		return tok.getTokenKind() == TokenKind.CLOSE_PARANTHESIS;
+	}
+	public static boolean isIf(Token tok) {
+		return tok.getTokenKind() == TokenKind.IF;
 	}
 	public static boolean isCharacter(Token tok) {
 		return tok.getTokenKind() == TokenKind.CHARACTER;

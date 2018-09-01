@@ -19,7 +19,14 @@ public class VariableHandler {
 	public void createVariable(String NAME, DataType DATA_TYPE, int SCOPE){
 		variables.add(new Variable(NAME, memhdlr.findSpace(), DATA_TYPE, SCOPE));
 	}
-	
+	public boolean isVariable(String name) {
+		for (Variable var : variables) {
+			if (var.getName().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	//Returns a variable based on its name in code file
 	public Variable getVariable(String name){
 		for (Variable var : variables) {
@@ -27,7 +34,7 @@ public class VariableHandler {
 				return var;
 			}
 		}
-		System.err.println("'" + name + "' is not a variable");
+		//System.err.println("'" + name + "' is not a variable");
 		return null;
 	}
 	

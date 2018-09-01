@@ -40,7 +40,7 @@ public class Main {
 		MemoryHandler memhdlr = new MemoryHandler(64);
 		VariableHandler varhdlr = new VariableHandler(memhdlr);
 		ArrayHandler arrhdlr = new ArrayHandler(varhdlr);
-		ScopeHandler scopehdlr = new ScopeHandler();
+		ScopeHandler scopehdlr = new ScopeHandler(instrhdlr);
 		
 		//Parser
 		Parser parser = new Parser(instrhdlr, arrhdlr, reghdlr, varhdlr, tokenhdlr, scopehdlr);

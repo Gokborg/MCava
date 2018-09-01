@@ -58,10 +58,10 @@ public class ArrayParser {
 	    tokenhdlr.movePointerRight();
 	    if (status == 1 || status == 3) {
 	    	size = Integer.parseInt(tokenhdlr.getNextToken().getName());
-	    	tokenhdlr.movePointerRight();
 	    }
+	    tokenhdlr.movePointerRight();
 	    String name = tokenhdlr.getNextToken().getName();
-	    
+	   
 	    if (size == null || status == 1) {
 		    tokenhdlr.movePointer(2);
 		    Token tok = tokenhdlr.getNextToken();
