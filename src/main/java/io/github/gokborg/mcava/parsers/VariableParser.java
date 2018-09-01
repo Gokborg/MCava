@@ -54,7 +54,7 @@ public class VariableParser {
 		 */
 		
 		if (info[3].length() == 1) {			
-			if(isNum(info[3]) || info[4].equalsIgnoreCase("chararg")) {
+			if(SyntaxChecker.isNum(info[3]) || info[4].equalsIgnoreCase("chararg")) {
 				int value = info[4].equalsIgnoreCase("chararg") ? info[3].charAt(0) : Integer.parseInt(info[3]);
 				instrhdlr.addInstruction("li r" + register + ", " + value);
 				varhdlr.strVariable(destVar, register);
@@ -93,13 +93,5 @@ public class VariableParser {
 		//instrhdlr.addInstruction("; Intialized '" + name + "'");
 		return varhdlr.getVariable(name);
 	}
-	private boolean isNum(String str) {
-		try {
-			Integer.parseInt(str);
-			return true;
-		}
-		catch(NumberFormatException e) {
-			return false;
-		}
-	}
+	
 }

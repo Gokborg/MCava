@@ -29,8 +29,8 @@ public class Parser {
 			varParser.parse(synChk.getInfo());
 		}
 		//Step 5 : Check for array parse *not implemented*
-		else if (synChk.checkInitArray() > 0) {
-			arrParser.parse(synChk.getStatus());
+		else if (synChk.checkInitArray()) {
+			arrParser.parse(synChk.getInfo());
 		}
 		else if (synChk.checkIf()) {
 			ifparser.parse(synChk.getInfo());

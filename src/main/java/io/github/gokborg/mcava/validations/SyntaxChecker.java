@@ -112,10 +112,12 @@ public class SyntaxChecker {
 			if (isOpenBracket(tokenhdlr.getNextToken())) {
 				if (!isNum(tokenhdlr.getNextToken())) {
 					System.err.println("Missing the index");
+					resetTokenHandler();
 					return false;
 				}
 				if (!isCloseBracket(tokenhdlr.getNextToken())) {
 					System.err.println("Missing close bracket");
+					resetTokenHandler();
 					return false;
 				}
 				varName += "[" + tokenhdlr.getLastToken().getName() + "]";
@@ -139,7 +141,7 @@ public class SyntaxChecker {
 								resetTokenHandler();
 								if (value != "") {
 									//Initializing variable with value
-									
+									resetTokenHandler();
 									info = fast + " " + dataType + " " + varName + " " + value + " " + isCharacter;
 									
 									return true;
@@ -178,87 +180,68 @@ public class SyntaxChecker {
 		return false;
 	}
 	
-	//TODO: Rewrite this ugly duckling
-	public int checkInitArray() {
-		/*
-		 * Returning 0 : Means that there is an error
-		 * Returning 1 : Means that they intialze an array with a given size AND initial values
-		 * Returning 2 : Means that they intialze an array with no given size AND initial values
-		 * Returning 3 : Means that they intialze an array with a given size AND no initial values
-		 */
-		boolean givenSize = false;
-		Integer arraySize = null;
+	public boolean checkInitArray() {
+		
+		// Info string : [data_type] [name] [size] [intial values]
+		
+		String arraySize = "none";
+		String dataType = "none";
 		if (isDataType(tokenhdlr.getNextToken())) {
-			
+			dataType = tokenhdlr.getCurrentToken().getName();
 			if (isOpenBracket(tokenhdlr.getNextToken())) {
 				
 				if (isCloseBracket(tokenhdlr.getNextToken()) || isNum(tokenhdlr.getCurrentToken())) {
 					
 					//Do they have a size for their array?
 					if (isNum(tokenhdlr.getCurrentToken())) {
-						givenSize = true;
-						arraySize = Integer.parseInt(tokenhdlr.getCurrentToken().getName());
+						arraySize = tokenhdlr.getCurrentToken().getName();
 						if (!isCloseBracket(tokenhdlr.getNextToken())) {
 							//Meaning they did not close the bracket around the number
 							resetTokenHandler();
 							System.err.println("[SynChk] You did not close the bracket!");
-							status = 0;
-							return 0;
+							return false;
 						}
 					}
 					//Did they put a name for the array?
 					if (isWordOrChar(tokenhdlr.getNextToken())) {
-						
+						String name = tokenhdlr.getCurrentToken().getName();
 						//Meaning they have some numbers to fill the array with
 						if (isEqual(tokenhdlr.getNextToken())) {
 							if (isOpenBrace(tokenhdlr.getNextToken())) {
-								
-								tokenhdlr.movePointerRight();
-								int argCounter = 1;
+								String args = "";
+								int argCounter = 0;
 								Token tok = tokenhdlr.getNextToken();
 								while (tok.getTokenKind() != TokenKind.NONE) {
-									if (isCloseBrace(tok)) {
-										
-										if (arraySize != null && argCounter != arraySize) {
-											resetTokenHandler();
-											//Meaning they put more intial values than the size of the array
-											status = 0;
-											return 0;
-										}
-										if (isSemiColon(tokenhdlr.getNextToken())) {
-											resetTokenHandler();
-											if (givenSize) {
-												resetTokenHandler();
-												status = 1;
-												return 1;
-											}
-											resetTokenHandler();
-											status = 2;
-											return 2;
-										}				
-										resetTokenHandler();
-										status = 0;
-										return 0;
-									}
-									if (isNum(tok) || isCharacter(tok)) {
+									if (!isComma(tok) && !isSingleQuote(tok) && (isNum(tok) || isCharacter(tok))) {
+										args += tok.getName() + "/";
 										argCounter++;
+									}
+									if (isCloseBrace(tok)) {
+										if (isSemiColon(tokenhdlr.getNextToken())) {
+											if (arraySize.equalsIgnoreCase("none")) {
+												arraySize = String.valueOf(argCounter);
+											}
+											if (Integer.parseInt(arraySize) == argCounter) {
+												info = dataType + " " + name + " " + arraySize + " " + args;
+												resetTokenHandler();
+												return true;
+											}
+										}
 									}
 									tok = tokenhdlr.getNextToken();
 								}
+								System.err.println("[SynChk] Bad arguements: " + tokenhdlr.getLine());
 							}
 						}
 						
 						//Meaning there just defining the array  Ex: int a[5];
 						else if (isSemiColon(tokenhdlr.getCurrentToken())) {
-							if(givenSize) {
+							if(!arraySize.equalsIgnoreCase("none")) {
 								resetTokenHandler();
-								status = 3;
-								return 3;
+								info = dataType + " " + name + " " + arraySize + " none";
+								return true;
 							}
 							System.err.println("[SynChk] Must give a size to the array!");
-							resetTokenHandler();
-							status = 0;
-							return 0;
 						}
 					}
 					else {
@@ -271,12 +254,26 @@ public class SyntaxChecker {
 			//System.err.println("[SynChk] Where is the data type? : " + tokenhdlr.getCurrentToken().getName());
 		}
 		resetTokenHandler();
-		status = 0;
-		return 0;
+		return false;
 	}
 	
 	private void resetTokenHandler() {
 		tokenhdlr.resetPointer();
+	}
+	public static boolean isNum(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
+	}
+	public static boolean isSingleQuote(Token tok) {
+		return tok.getTokenKind() == TokenKind.SINGLE_QUOTE;
+	}
+	public static boolean isComma(Token tok) {
+		return tok.getTokenKind() == TokenKind.COMMA;
 	}
 	public static boolean isOpenParanthesis(Token tok) {
 		return tok.getTokenKind() == TokenKind.OPEN_PARANTHESIS;
