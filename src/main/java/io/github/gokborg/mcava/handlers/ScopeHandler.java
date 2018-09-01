@@ -1,16 +1,17 @@
 package io.github.gokborg.mcava.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ScopeHandler {
 	private int scope = 0;
-	private List<String> onLeaveScopeInstructions = new ArrayList<String>();
+	private HashMap<Integer, List<String>> onLeaveScopeInstructions = new HashMap<Integer, List<String>>();
 	/*
 	 * Scope
 	 * 
 	 * - The higher the scope the deeper you are in curly brackets
-	 * - Closed curly brackets lets the scope decrease 
+	 * - Ex: Closed curly brackets lets the scope decrease 
 	 */
 	private InstructionHandler instrhdlr;
 	public ScopeHandler(InstructionHandler instrhdlr) {
@@ -22,16 +23,26 @@ public class ScopeHandler {
 	}
 	
 	public void addOnLeaveInstruction(String instruction) {
-		onLeaveScopeInstructions.add(instruction);
+		if (onLeaveScopeInstructions.get(scope) != null) {
+			onLeaveScopeInstructions.get(scope).add(instruction);
+		}
+		else {
+			onLeaveScopeInstructions.put(scope, new ArrayList<String>());
+			addOnLeaveInstruction(instruction);
+		}
 	}
 	
 	public void increaseScope() {
 		scope++;
 	}
 	public void decreaseScope() {
-		scope--;
-		for (String instruction : onLeaveScopeInstructions) {
-			instrhdlr.addInstruction(instruction);
+		List<String> instructions = onLeaveScopeInstructions.get(scope);
+		if (instructions != null) {	
+			for (String instruction : instructions) {
+				instrhdlr.addInstruction(instruction);
+			}
 		}
+		scope--;
 	}
+	
 }

@@ -19,13 +19,13 @@ import io.github.gokborg.mcava.validations.Filter;
 import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 
-public class Main {
+public class MCava {
 	public static void main(String[] args) {
 		//Part of Stage 0:
 		Filter filter = new Filter();
 		
 		//Part of Stage 2:
-		TokenHandler tokenhdlr = new TokenHandler(null);
+		TokenHandler tokenhdlr = new TokenHandler(null, "");
 		
 		/*
 		 * Part of Stage 3:
@@ -38,7 +38,7 @@ public class Main {
 		RegisterHandler reghdlr = new RegisterHandler(8);
 		InstructionHandler instrhdlr = new InstructionHandler();
 		MemoryHandler memhdlr = new MemoryHandler(64);
-		VariableHandler varhdlr = new VariableHandler(memhdlr);
+		VariableHandler varhdlr = new VariableHandler(memhdlr, reghdlr, instrhdlr, 4);
 		ArrayHandler arrhdlr = new ArrayHandler(varhdlr);
 		ScopeHandler scopehdlr = new ScopeHandler(instrhdlr);
 		
@@ -60,6 +60,7 @@ public class Main {
 					
 					//Step 2 : Send the generated tokens to the token handler
 					tokenhdlr.setTokens(tokens);
+					tokenhdlr.setLine(line);
 					
 					//Stage 3 : Begin parsing 
 					parser.parse(synChk);

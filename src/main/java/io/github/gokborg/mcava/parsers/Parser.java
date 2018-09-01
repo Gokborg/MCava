@@ -40,7 +40,7 @@ public class Parser {
 			tokenhdlr.resetPointer();
 		}
 		else {
-			System.err.println("Hwat is dat shit");
+			System.err.println("[Parser] Failed to parse line: " + tokenhdlr.getLine());
 		}
 		
 		//Step 6 : Look for command parse *not implemented*

@@ -19,34 +19,51 @@ public class IfParser {
 		this.reghdlr = reghdlr;
 	}
 	public void parse(String args) {
+		scopehdlr.increaseScope();
 		String[] ifArgs = args.split(" ");
-		int arg1Adr = 0;
-		int arg2Adr = 0;
+		Variable arg1 = null;
+		Variable arg2 = null;
 		if (varhdlr.isVariable(ifArgs[0]) && varhdlr.isVariable(ifArgs[1])){
-			arg1Adr = varhdlr.getVariable(ifArgs[0]).getAddress();
-			arg2Adr = varhdlr.getVariable(ifArgs[1]).getAddress();
+			arg1 = varhdlr.getVariable(ifArgs[0]);
+			arg2 = varhdlr.getVariable(ifArgs[1]);
 		}
 		else {
 			System.err.println("[IfParser] The two arguements in the if statement are not variables");
+			return;
 		}
 		
 		String cmpInstruction = "";
+		
+		//Getting the opposition compare instruction
 		switch (ifArgs[2]) {
 		case "==":
 			cmpInstruction = "jne";
 			break;
+		case ">":
+			cmpInstruction = "jl";
+			break;
+		case "<":
+			cmpInstruction = "jg";
+			break;
+		case ">=":
+			cmpInstruction = "jle";
+			break;
+		case "<=":
+			cmpInstruction = "jge";
+			break;
+		case "!=":
+			cmpInstruction = "je";
+			break;
 		}
-		int registerOne = reghdlr.findSpace();
-		int registerTwo = reghdlr.findSpace();
-		instrhdlr.addInstruction("ld r" + registerOne + ", $" + arg1Adr);
-		instrhdlr.addInstruction("ld r" + registerTwo + ", $" + arg2Adr);
+		
+		int registerOne = varhdlr.ldVariable(arg1);
+		int registerTwo = varhdlr.ldVariable(arg2);
 		instrhdlr.addInstruction("cmp r" + registerOne + ", r" + registerTwo);
 		instrhdlr.addInstruction(cmpInstruction + " OUTIF" + id);
 		scopehdlr.addOnLeaveInstruction("OUTIF" + id + ":");
 		id++;
-		scopehdlr.increaseScope();
-		reghdlr.deallocate(registerOne);
-		reghdlr.deallocate(registerTwo);
+		varhdlr.tryRegDeallocate(registerOne);
+		varhdlr.tryRegDeallocate(registerTwo);
 	}
 	
 }

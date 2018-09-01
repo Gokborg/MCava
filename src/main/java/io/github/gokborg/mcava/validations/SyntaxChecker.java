@@ -76,25 +76,37 @@ public class SyntaxChecker {
 					}
 				}
 			}
+			System.err.println("[SynChk] Error on line: " + tokenhdlr.getLine());
 		}
-		
 		tokenhdlr.resetPointer();
 		return false;
 	}
 	
 	public boolean checkVar() {
 		/*
-		 * info sheet: [dataType, none] [word] [expression or value or string]
+		 * info sheet: [fast, none] [dataType, none] [word] [expression or value or string]
 		 */
-		String dataType = "";
+		String fast = "none";
+		String dataType = "none";
+		if (isFast(tokenhdlr.getNextToken())) {
+			fast = "fast";
+		}
+		else {
+			tokenhdlr.movePointerLeft();
+		}
 		if (isDataType(tokenhdlr.getNextToken())) {
-			
 			dataType = tokenhdlr.getCurrentToken().getName();
 		}
-		else {	
-			dataType = "none";
-		}	
+		else {
+			if (fast.equalsIgnoreCase("fast")) {
+				System.err.println("[SynChk] Missing data type");
+				return false;
+			}
+			tokenhdlr.movePointerLeft();
+		}
+		
 		if (isWordOrChar(tokenhdlr.getNextToken())) {
+			
 			String varName = tokenhdlr.getCurrentToken().getName();
 			
 			if (isOpenBracket(tokenhdlr.getNextToken())) {
@@ -112,17 +124,24 @@ public class SyntaxChecker {
 			else {
 				tokenhdlr.movePointerLeft();
 			}
+			
 			if (isEqual(tokenhdlr.getNextToken())) {
 				Token tok = tokenhdlr.getNextToken();
 				if (tok.getTokenKind() != TokenKind.NONE) {
 					String value = "";
+					String isCharacter = "none";
 					while(tok.getTokenKind() != TokenKind.NONE) {
+						if (tok.getTokenKind() == TokenKind.SINGLE_QUOTE) {
+							isCharacter = "chararg";
+						}
 						if (tok.getTokenKind() != TokenKind.SINGLE_QUOTE) {
 							if (isSemiColon(tok)) {
 								resetTokenHandler();
 								if (value != "") {
 									//Initializing variable with value
-									info = dataType + " " + varName + " " + value;
+									
+									info = fast + " " + dataType + " " + varName + " " + value + " " + isCharacter;
+									
 									return true;
 								}
 								else {
@@ -143,7 +162,8 @@ public class SyntaxChecker {
 				resetTokenHandler();
 				
 				//Initializing variable
-				info = dataType + " " + varName + " none";
+				info = "none " + dataType + " " + varName + " none none";
+				
 				return true;
 			}
 			else {
@@ -299,6 +319,10 @@ public class SyntaxChecker {
 	
 	public static boolean isDataType(Token tok) {
 		return tok.getTokenKind() == TokenKind.DATA_TYPE;
+	}
+	
+	public static boolean isFast(Token tok) {
+		return tok.getTokenKind() == TokenKind.FAST;
 	}
 	
 	public static boolean isEqual(Token tok) {

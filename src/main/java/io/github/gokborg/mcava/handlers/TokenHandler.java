@@ -8,9 +8,17 @@ import io.github.gokborg.mcava.lexer.TokenKind;
 public class TokenHandler {
 	private List<Token> tokens;
 	private int pointer;
-	public TokenHandler(List<Token> tokens) {
+	private String line;
+	public TokenHandler(List<Token> tokens, String line) {
 		this.tokens = tokens;
 		pointer = -1;
+		this.line = line;
+	}
+	public String getLine() {
+		return line;
+	}
+	public void setLine(String line) {
+		this.line = line;
 	}
 	public void setTokens(List<Token> tokens) {
 		this.tokens = tokens;

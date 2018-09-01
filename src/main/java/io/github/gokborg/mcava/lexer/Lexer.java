@@ -117,6 +117,9 @@ public class Lexer{
 				else if (str.equalsIgnoreCase("if")) {
 					tokens.add(new Token(str, TokenKind.IF));
 				}
+				else if (str.equalsIgnoreCase("fast")){
+					tokens.add(new Token(str, TokenKind.FAST));
+				}
 				else {
 					tokens.add(new Token(str, TokenKind.WORD));
 				}

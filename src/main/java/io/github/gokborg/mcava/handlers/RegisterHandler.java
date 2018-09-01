@@ -28,4 +28,8 @@ public class RegisterHandler {
 	public void deallocate(int reg) {
 		regStates[reg-1] = false;
 	}
+	
+	public int getSize() {
+		return regStates.length;
+	}
 }
