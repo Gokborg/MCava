@@ -12,10 +12,12 @@ public class Parser {
 	private VariableParser varParser;
 	private ArrayParser arrParser;
 	private IfParser ifparser;
+	private ExpressionParser expParser;
 	private ScopeHandler scopehdlr;
 	private TokenHandler tokenhdlr;
 	public Parser(InstructionHandler instrhdlr, ArrayHandler arrhdlr, RegisterHandler reghdlr, VariableHandler varhdlr, TokenHandler tokenhdlr, ScopeHandler scopehdlr) {
-		this.varParser = new VariableParser(instrhdlr, reghdlr, tokenhdlr, varhdlr, scopehdlr);
+		this.expParser = new ExpressionParser(instrhdlr, reghdlr, varhdlr);
+		this.varParser = new VariableParser(instrhdlr, expParser, reghdlr, tokenhdlr, varhdlr, scopehdlr);
 		this.arrParser = new ArrayParser(tokenhdlr, reghdlr, arrhdlr, scopehdlr, instrhdlr);
 		this.ifparser = new IfParser(varhdlr, instrhdlr, reghdlr, scopehdlr);
 		this.scopehdlr = scopehdlr;

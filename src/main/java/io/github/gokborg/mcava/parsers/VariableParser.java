@@ -15,12 +15,14 @@ public class VariableParser {
 	private ScopeHandler scopehdlr;
 	private InstructionHandler instrhdlr;
 	private RegisterHandler reghdlr;
-	public VariableParser(InstructionHandler instrhdlr, RegisterHandler reghdlr, TokenHandler tokenhdlr, VariableHandler varhdlr, ScopeHandler scopehdlr) {
+	private ExpressionParser expParser;
+	public VariableParser(InstructionHandler instrhdlr, ExpressionParser expParser, RegisterHandler reghdlr, TokenHandler tokenhdlr, VariableHandler varhdlr, ScopeHandler scopehdlr) {
 		this.tokenhdlr = tokenhdlr;
 		this.varhdlr = varhdlr;
 		this.scopehdlr = scopehdlr;
 		this.instrhdlr = instrhdlr;
 		this.reghdlr = reghdlr;
+		this.expParser = expParser;
 	}
 	
 	public void parse(String info) {
@@ -54,7 +56,6 @@ public class VariableParser {
 		 */
 		
 		if (info[3].length() == 1) {			
-			System.out.println("HERE");
 			if(SyntaxChecker.isNum(info[3]) || info[4].equalsIgnoreCase("chararg")) {
 				int value = info[4].equalsIgnoreCase("chararg") ? info[3].charAt(0) : Integer.parseInt(info[3]);
 				instrhdlr.addInstruction("li r" + register + ", " + value);
@@ -79,6 +80,14 @@ public class VariableParser {
 			
 			//Clearing the space I allocated on the register file
 			varhdlr.tryRegDeallocate(register);
+		}
+		else {
+			/*
+			 * Expression Parser 
+			 */
+			varhdlr.tryRegDeallocate(register);
+			expParser.parse(info[3], destVar);
+			varhdlr.strVariable(destVar);
 		}
 	}
 	private Variable makeVariable(String[] info) {

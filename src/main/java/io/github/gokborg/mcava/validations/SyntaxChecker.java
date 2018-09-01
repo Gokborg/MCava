@@ -151,7 +151,7 @@ public class SyntaxChecker {
 									break;
 								}	
 							}
-							value += tok.getName();
+							value += (value.length() >= 1 ? "/" : "") + tok.getName();
 						}
 						tok = tokenhdlr.getNextToken();
 					}
