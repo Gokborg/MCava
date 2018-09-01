@@ -42,7 +42,7 @@ public class VariableParser {
 	private void assignVariable(Variable destVar, String[] info) {
 		//Allocating space on the register file
 		if (destVar == null) {
-			System.err.println("No destination variable!");
+			System.err.println("[VarParser] No destination variable!");
 			return;
 		}
 		int register = destVar.isReg() ? destVar.getAddress() : reghdlr.findSpace();
@@ -54,6 +54,7 @@ public class VariableParser {
 		 */
 		
 		if (info[3].length() == 1) {			
+			System.out.println("HERE");
 			if(SyntaxChecker.isNum(info[3]) || info[4].equalsIgnoreCase("chararg")) {
 				int value = info[4].equalsIgnoreCase("chararg") ? info[3].charAt(0) : Integer.parseInt(info[3]);
 				instrhdlr.addInstruction("li r" + register + ", " + value);

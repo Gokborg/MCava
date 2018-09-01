@@ -213,8 +213,32 @@ public class SyntaxChecker {
 								Token tok = tokenhdlr.getNextToken();
 								while (tok.getTokenKind() != TokenKind.NONE) {
 									if (!isComma(tok) && !isSingleQuote(tok) && (isNum(tok) || isCharacter(tok))) {
-										args += tok.getName() + "/";
-										argCounter++;
+										if (dataType.equalsIgnoreCase("char")) {
+											if (isSingleQuote(tokenhdlr.getLastToken())) {
+												
+												tokenhdlr.movePointerRight();
+												if (isSingleQuote(tokenhdlr.getNextToken())) {
+													args += tok.getName() + "/";
+													argCounter++;
+													tokenhdlr.movePointerLeft();
+												}
+											}
+											else {
+												System.err.println("[SynChk] Missing quotation around char(s) : " + tokenhdlr.getLine());
+												resetTokenHandler();
+												return false;
+											}
+										}
+										else if (dataType.equalsIgnoreCase("int")) {
+											args += tok.getName() + "/";
+											argCounter++;
+										}
+										else {
+											System.err.println("[SynChk] Unknown array data type! : " + tokenhdlr.getLine());
+											resetTokenHandler();
+											return false;
+										}
+										
 									}
 									if (isCloseBrace(tok)) {
 										if (isSemiColon(tokenhdlr.getNextToken())) {
@@ -225,6 +249,11 @@ public class SyntaxChecker {
 												info = dataType + " " + name + " " + arraySize + " " + args;
 												resetTokenHandler();
 												return true;
+											}
+											else {
+												System.err.println("[SynChk] Not enough arguments for size: " + tokenhdlr.getLine());
+												resetTokenHandler();
+												return false;
 											}
 										}
 									}

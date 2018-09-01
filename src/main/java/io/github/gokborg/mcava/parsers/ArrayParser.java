@@ -1,8 +1,5 @@
 package io.github.gokborg.mcava.parsers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.gokborg.mcava.components.Array;
 import io.github.gokborg.mcava.components.DataType;
 import io.github.gokborg.mcava.handlers.ArrayHandler;
@@ -10,8 +7,6 @@ import io.github.gokborg.mcava.handlers.InstructionHandler;
 import io.github.gokborg.mcava.handlers.RegisterHandler;
 import io.github.gokborg.mcava.handlers.ScopeHandler;
 import io.github.gokborg.mcava.handlers.TokenHandler;
-import io.github.gokborg.mcava.lexer.Token;
-import io.github.gokborg.mcava.lexer.TokenKind;
 import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class ArrayParser {
@@ -33,8 +28,16 @@ public class ArrayParser {
 		String[] arrArgInfo = arrInfo[3].split("/");
 		
 		if (!arrInfo[0].equalsIgnoreCase("none")) {
-			intializeArray(arrInfo);
-			ldValues(arrInfo, arrArgInfo);
+			if (!arrInfo[3].equalsIgnoreCase("none")) {
+				intializeArray(arrInfo);
+				ldValues(arrInfo, arrArgInfo);
+			}
+			else {
+				intializeArray(arrInfo);
+			}
+		}
+		else {
+			System.err.println("[ArrParse] Missing data type. : " + tokenhdlr.getLine());
 		}
 		
 	}

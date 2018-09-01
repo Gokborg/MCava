@@ -6,7 +6,6 @@ import io.github.gokborg.mcava.handlers.RegisterHandler;
 import io.github.gokborg.mcava.handlers.ScopeHandler;
 import io.github.gokborg.mcava.handlers.TokenHandler;
 import io.github.gokborg.mcava.handlers.VariableHandler;
-import io.github.gokborg.mcava.lexer.Token;
 import io.github.gokborg.mcava.validations.SyntaxChecker;
 
 public class Parser {
