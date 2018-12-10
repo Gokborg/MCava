@@ -10,14 +10,18 @@ import io.github.gokborg.mcava.lexing.TokenBuffer;
 public class ExpressionParser
 {
 	private TokenBuffer tokBuff;
-	private List<String> instructions = new ArrayList<>();
 	public ExpressionParser(TokenBuffer tokBuff)
 	{
 		this.tokBuff = tokBuff;
 	}
-	public int parseExpression()
+	
+	//Converts everything to instructions in the end : stores in register specified
+	public List<String> parseExpression(int register)
 	{
-		return 0;
+		List<String> instructions = new ArrayList<>();
+		int end = parseTerm();
+		instructions.add("li r" + register + ", " + end);
+		return instructions;
 	}
 	public int parseTerm()
 	{

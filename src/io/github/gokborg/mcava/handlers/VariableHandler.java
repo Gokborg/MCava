@@ -4,22 +4,29 @@ import java.util.HashMap;
 
 import io.github.gokborg.mcava.data.DataType;
 import io.github.gokborg.mcava.data.Variable;
+import io.github.gokborg.mcava.exceptions.OutOfRegisterSpace;
 
-public class VariableHandler 
+public class VariableHandler implements ScopeListener
 {
-	private HashMap<String, Variable> variables = new HashMap<>();
+	/**
+	 * THIS CLASS WILL BE CHANGED SOON
+	 */
+	private HashMap<String, Variable> varsByName = new HashMap<>();
+	
 	private MemoryHandler memhdlr;
 	private RegisterHandler reghdlr;
 	private ScopeHandler scopehdlr;
+	private InstructionHandler instrhdlr;
 	
 	private final int MAXIMUM_REGISTER_ALLOCATIONS;
 	private int currentAllocations = 0;
 	
-	public VariableHandler(MemoryHandler memhdlr, RegisterHandler reghdlr, ScopeHandler scopehdlr)
+	public VariableHandler(MemoryHandler memhdlr, RegisterHandler reghdlr, InstructionHandler instrhdlr, ScopeHandler scopehdlr)
 	{
 		this.memhdlr = memhdlr;
 		this.reghdlr = reghdlr;
 		this.scopehdlr = scopehdlr;
+		this.instrhdlr = instrhdlr;
 		
 		//TODO: Make this public so people can edit this
 		MAXIMUM_REGISTER_ALLOCATIONS = 1;
@@ -29,28 +36,79 @@ public class VariableHandler
 	{
 		if(currentAllocations == MAXIMUM_REGISTER_ALLOCATIONS)
 		{
+			Variable var = new Variable(type, name, memhdlr.allocate(), scopehdlr.getScope());
+			
 			//We ran out of register space for variables! Switch to using RAM :O
-			variables.put(name, new Variable(type, name, memhdlr.allocate(), scopehdlr.getScope()));
+			varsByName.put(name, var);
 		}
 		else
 		{
-			int regSpace = reghdlr.allocate(name);
-			currentAllocations++;
-			if(regSpace == -1)
+			int regSpace;
+			try 
 			{
-				System.err.println("We ran out of register space!");
+				regSpace = reghdlr.allocate(name); //get some of that juicy reg space
+				currentAllocations++; //increase our usage of regs :c
+				varsByName.put(name, new Variable(type, name, regSpace, scopehdlr.getScope()));
 				
+			} 
+			catch (OutOfRegisterSpace e) 
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Frees memory used by variables in previous scopes.
+	 * 
+	 * Runs whenever the scope changes from inside out.
+	 * If were leaving an if statement, for example, this function will run.
+	 * However, if were entering an if statment this function WON'T run.
+	 * 
+	 */
+	@Override
+	public void leftScope() 
+	{
+		for(Variable var : varsByName.values())
+		{
+			memhdlr.deallocate(var.getAddress());
+			varsByName.remove(var.getName(), var);
+		}
+	}
+	
+	//Returns an integer representing the register that the variable has been stored in
+	public int loadVariable(String name)
+	{
+		//First search registers incase the variable is already in one
+		if(reghdlr.search(name))
+		{
+			return varsByName.get(name).getAddress();
+		}
+		else
+		{
+			int regSpace;
+			try
+			{
+				regSpace = reghdlr.allocate(name);
+				currentAllocations++;
+				instrhdlr.addInstruction("ld r" + regSpace + ", $" + varsByName.get(name).getAddress());
+				return regSpace;
+			}
+			catch (OutOfRegisterSpace e) 
+			{
+				e.printStackTrace();
+				return 0;
 			}
 		}
 	}
 	
 	public Variable getVariable(String name)
 	{
-		return variables.get(name);
+		return varsByName.get(name);
 	}
 	
-	public void storeVariable()
+	public int getVariableAddress(String name)
 	{
-		
+		return reghdlr.searchAddress(name);
 	}
 }
