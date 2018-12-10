@@ -18,12 +18,12 @@ public class Parser
 	private InstructionHandler instrhdlr;
 	private ScopeHandler scopehdlr;
 	
-	public Parser(TokenBuffer tokBuff, MemoryHandler memhdlr, RegisterHandler reghdlr)
+	public Parser(TokenBuffer tokBuff, InstructionHandler instrhdlr, MemoryHandler memhdlr, RegisterHandler reghdlr)
 	{
 		this.tokBuff = tokBuff;
 		this.memhdlr = memhdlr;
 		this.reghdlr = reghdlr;
-		this.instrhdlr = new InstructionHandler();
+		this.instrhdlr = instrhdlr;
 		this.scopehdlr = new ScopeHandler();
 		this.varhdlr = new VariableHandler(memhdlr, reghdlr, instrhdlr, scopehdlr);
 		
@@ -32,6 +32,6 @@ public class Parser
 	
 	public void parse()
 	{
-	
+		varParser.parse();
 	}
 }

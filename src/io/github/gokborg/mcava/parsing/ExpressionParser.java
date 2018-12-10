@@ -33,7 +33,9 @@ public class ExpressionParser
 				fact1 *= parseFactor();
 			else if(operator.equals("/"))
 				fact1 /= parseFactor();
+			operator = tokBuff.nextName();
 		}
+		System.out.println("[ExpressionParser] Heres result: " + fact1);
 		return fact1;
 	}
 	public int parseFactor()

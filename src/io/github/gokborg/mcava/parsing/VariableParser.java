@@ -32,42 +32,41 @@ public class VariableParser
 	
 	public void parse()
 	{
+		System.out.println("DEBUG: Inside variable parse function");
 		//Call the next token: its either a data type OR an identifier
 		Token nextToken = tokBuff.next();
 		Variable var = varhdlr.getVariable(nextToken.getValue());
-		
+		Variable finalVar = var;
 		//Means variable does not exist and I need to make one
 		if(var == null)
 		{
+			System.out.println("DEBUG: [VariableParser] Seems we have a data type");
 			DataType varType = parseDataType();
 			String varName = tokBuff.nextName();
 			varhdlr.createVariable(varName, varType);
+			finalVar = varhdlr.getVariable(varName);
 			tokBuff.skip(); //eat the '='
 			
 			//Were at the first position of the expression
 			//I will now pass it to the expression parser!
 			//Whatever instructions it returns the final product will be in the reg specified
-			
-			
-			//TODO: Change this debug stuff plz
-			int registerOfVar = reghdlr.searchAddress(varName);
-			if(registerOfVar == -1)
-			{
-				try {
-					instrhdlr.addInstruction("ld r" + reghdlr.allocate(varName) + ", $" + varhdlr.getVariable(varName).getAddress());
-				} catch (OutOfRegisterSpace e) {
-					e.printStackTrace();
-				}
-			}
-			List<String> instrFromExpressionParsing = expParser.parseExpression(registerOfVar);
-			
-			
-			
-			
 		}
-		else
+		//TODO: Change this debug stuff plz
+		System.out.println("[VariableParser] Heres the generated variable\n" + finalVar);
+		int registerOfVar = reghdlr.searchAddress(finalVar.getName());
+		if(registerOfVar == -1)
 		{
-			
+			try {
+				registerOfVar = reghdlr.allocate(finalVar.getName());
+			} catch (OutOfRegisterSpace e) {
+				e.printStackTrace();
+			}
+		}
+		
+		List<String> instrFromExpressionParsing = expParser.parseExpression(registerOfVar);
+		for(String instr : instrFromExpressionParsing)
+		{
+			instrhdlr.addInstruction(instr);
 		}
 		
 	}

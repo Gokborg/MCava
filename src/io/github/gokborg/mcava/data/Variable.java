@@ -54,9 +54,9 @@ public class Variable
 	{
 		this.type = type;
 	}
-
 	
-	
-	
-
+	public String toString()
+	{
+		return "Var: name = '" + name + "', type = '" + type + "'";
+	}
 }

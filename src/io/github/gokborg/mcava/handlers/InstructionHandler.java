@@ -11,4 +11,15 @@ public class InstructionHandler
 	{
 		instructions.add(instruction);
 	}
+	
+	@Override
+	public String toString()
+	{
+		String allInstructions = "";
+		for(int i = 0; i < instructions.size(); i++)
+		{
+			allInstructions += i + ": " + instructions.get(i) + "\n";
+		}
+		return allInstructions;
+	}
 }
